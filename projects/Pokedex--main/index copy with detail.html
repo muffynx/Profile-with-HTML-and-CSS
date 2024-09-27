@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokedex Lab</title>
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<script>
+    async function fetchPokemonDetails(url) {
+        const res = await fetch(url);
+        const data = await res.json();
+        return data;
+    }
+
+    const data = fetch("https://pokeapi.co/api/v2/pokemon?limit=10")
+    .then((res) => res.json())
+    .then((data) => {
+        const datas = data["results"];
+        const ele = document.getElementById("name");
+
+        datas.forEach(async (element) => {
+            const details = await fetchPokemonDetails(element.url);
+            const imageUrl = details.sprites.front_default;
+            const height = details.height;
+            const weight = details.weight;
+            const abilities = details.abilities.map(ability => ability.ability.name).join(', ');
+
+            const cardHtml = `
+            <div class='col-3'>
+                <div class='card'>
+                    <img src='${imageUrl}' class='card-img-top' alt='${element.name}' onclick="showDetails('${element.name}', '${imageUrl}', ${height}, ${weight}, '${abilities}')">
+                    <div class='card-body'>
+                        <h5 class='card-title'>${element.name}</h5>
+                    </div>
+                </div>
+            </div>`;
+            
+            ele.innerHTML += cardHtml;
+        });
+    })
+    .catch((err) => console.error(err));
+
+    function showDetails(name, imageUrl, height, weight, abilities) {
+        const modalBody = document.getElementById('modalBody');
+        modalBody.innerHTML = `
+            <img src='${imageUrl}' class='img-fluid' alt='${name}'>
+            <p><strong>Name:</strong> ${name}</p>
+            <p><strong>Height:</strong> ${height}</p>
+            <p><strong>Weight:</strong> ${weight}</p>
+            <p><strong>Abilities:</strong> ${abilities}</p>
+        `;
+        $('#detailModal').modal('show');
+    }
+</script>
+<body>
+    <div class="container">
+        <h1>Pokedex Lab</h1>
+        <div class="row" id="name"></div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detailModalLabel">Pokémon Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalBody">
+                    <!-- Pokémon details will be inserted here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies CDN -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

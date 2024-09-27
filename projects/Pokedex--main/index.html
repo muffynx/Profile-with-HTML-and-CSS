@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokedex Lab</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .card {
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Pokedex Lab</h1>
+        <div class="row" id="name"></div>
+        <div class="text-center mt-3">
+            <button id="load-more" class="btn btn-primary">Load More</button>
+        </div>
+    </div>
+
+    <script>
+        let offset = 0;  // Keeps track of the number of Pokémon already loaded
+        const limit = 10; // Number of Pokémon to load per request
+
+        async function fetchPokemonDetails(url) {
+            const res = await fetch(url);
+            const data = await res.json();
+            return data;
+        }
+
+        async function fetchPokemons() {
+            const url = `https://pokeapi.co/api/v2/pokemon?offset=${offset}&limit=${limit}`;
+            const res = await fetch(url);
+            const data = await res.json();
+            return data;
+        }
+
+        async function loadPokemons() {
+            try {
+                const data = await fetchPokemons();
+                const datas = data.results;
+                const ele = document.getElementById("name");
+
+                for (const element of datas) {
+                    const details = await fetchPokemonDetails(element.url);
+                    const imageUrl = details.sprites.front_default;
+                    const height = details.height;
+                    const weight = details.weight;
+                    const types = details.types.map(typeInfo => typeInfo.type.name).join(", ");
+                    const abilities = details.abilities.map(abilityInfo => abilityInfo.ability.name).join(", ");
+                    const hp = details.stats.find(stat => stat.stat.name === 'hp').base_stat;
+                    const attack = details.stats.find(stat => stat.stat.name === 'attack').base_stat;
+                    const defense = details.stats.find(stat => stat.stat.name === 'defense').base_stat;
+                    const specialAttack = details.stats.find(stat => stat.stat.name === 'special-attack').base_stat;
+                    const specialDefense = details.stats.find(stat => stat.stat.name === 'special-defense').base_stat;
+                    const speed = details.stats.find(stat => stat.stat.name === 'speed').base_stat;
+
+                    ele.innerHTML += 
+                    `<div class='col-3'>
+                        <a href='details/index.html?name=${element.name}&image=${imageUrl}&height=${height}&weight=${weight}&types=${types}&abilities=${abilities}&hp=${hp}&attack=${attack}&defense=${defense}&special-attack=${specialAttack}&special-defense=${specialDefense}&speed=${speed}'>
+                            <div class='card'>
+                                <img src='${imageUrl}' class='card-img-top' alt='${element.name}'>
+                                <div class='card-body'>
+                                    <h5 class='card-title'>${element.name}</h5>
+                                    <p class='card-text'>Types: ${types}</p>
+                                    <p class='card-text'>Abilities: ${abilities}</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>`;
+                }
+
+                offset += limit;  // Update the offset for the next request
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // Load the first set of Pokémon when the page loads
+        loadPokemons();
+
+        // Add event listener to the "Load More" button
+        document.getElementById("load-more").addEventListener("click", loadPokemons);
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

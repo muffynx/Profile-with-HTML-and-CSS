@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokedex Lab</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<script>
+    async function fetchPokemonDetails(url) {
+        const res = await fetch(url);
+        const data = await res.json(); // Added await here
+        return data;
+    }
+
+    fetch("https://pokeapi.co/api/v2/pokemon?limit=10")
+    .then((res) => res.json())
+    .then((data) => {
+        const datas = data.results;
+        const ele = document.getElementById("name");
+
+        datas.forEach(async (element) => {
+            const details = await fetchPokemonDetails(element.url);
+            const imageUrl = details.sprites.front_default;
+
+            ele.innerHTML += 
+            `<div class='col-3'>
+                <a href='details/index.html?name=${element.name}'>
+                    <div class='card'>
+                        <img src='${imageUrl}' class='card-img-top' alt='${element.name}'>
+                        <div class='card-body'>
+                            <h5 class='card-title'>${element.name}</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>`;
+        });
+        console.log(datas);
+    })  
+    .catch((err) => console.error(err));
+</script>
+<body>
+    <div class="container">
+        <h1>Pokedex Lab</h1>
+        <div class="row" id="name"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

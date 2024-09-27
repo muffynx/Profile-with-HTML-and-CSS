@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pokedex Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
+    <style>
+      .card {
+        margin-bottom: 1rem;
+      }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="name">Pokedex Details</h1>
+        <img id="image" class="img-fluid" alt="Pokémon Image" />
+        <p><strong>Height:</strong> <span id="height"></span> meters</p>
+        <p><strong>Weight:</strong> <span id="weight"></span> hectograms</p>
+        <p><strong>Types:</strong> <span id="types"></span></p>
+        <h3>Stats:</h3>
+        <ul>
+            <li><strong>HP:</strong> <span id="hp"></span></li>
+            <li><strong>Attack:</strong> <span id="attack"></span></li>
+            <li><strong>Defense:</strong> <span id="defense"></span></li>
+            <li><strong>Special Attack:</strong> <span id="special-attack"></span></li>
+            <li><strong>Special Defense:</strong> <span id="special-defense"></span></li>
+            <li><strong>Speed:</strong> <span id="speed"></span></li>
+        </ul>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const name = urlParams.get("name");
+        const image = urlParams.get("image");
+        const height = urlParams.get("height");
+        const weight = urlParams.get("weight");
+        const types = urlParams.get("types");
+        const hp = urlParams.get("hp");
+        const attack = urlParams.get("attack");
+        const defense = urlParams.get("defense");
+        const specialAttack = urlParams.get("special-attack");
+        const specialDefense = urlParams.get("special-defense");
+        const speed = urlParams.get("speed");
+
+        document.getElementById("name").innerText = name;
+        document.getElementById("image").src = image;
+        document.getElementById("height").innerText = height;
+        document.getElementById("weight").innerText = weight;
+
+
+        const typesArray = types.split(', ');
+        const typesHtml = typesArray.map(type => `<a href="../types/index.html?type=${type}">${type}</a>`).join(', ');
+        document.getElementById("types").innerHTML = typesHtml;
+
+        document.getElementById("hp").innerText = hp;
+        document.getElementById("attack").innerText = attack;
+        document.getElementById("defense").innerText = defense;
+        document.getElementById("special-attack").innerText = specialAttack;
+        document.getElementById("special-defense").innerText = specialDefense;
+        document.getElementById("speed").innerText = speed;
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>
